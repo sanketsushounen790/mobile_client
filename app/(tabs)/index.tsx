@@ -1,70 +1,106 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+// import { Image, StyleSheet, Platform } from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+// import { HelloWave } from '@/components/HelloWave';
+// import ParallaxScrollView from '@/components/ParallaxScrollView';
+// import { ThemedText } from '@/components/ThemedText';
+// import { ThemedView } from '@/components/ThemedView';
 
-export default function HomeScreen() {
+// import { SafeAreaView } from 'react-native';
+
+// import { Reader, useReader } from '@epubjs-react-native/core';
+// import { useFileSystem } from '@epubjs-react-native/expo-file-system';
+// import alice from '../../alice';
+
+// export default function HomeScreen() {
+//   const { goToLocation } = useReader();
+//   return (
+//     <ParallaxScrollView
+//       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+//       headerImage={
+//         <Image
+//           source={require('@/assets/images/ok.jpg')}
+//           style={styles.reactLogo}
+//         />
+//       }>
+//       <SafeAreaView style={{
+//         flex: 1, height: 800,
+//         width: 350,
+//       }}>
+//         <Reader
+//           src={alice}
+//           fileSystem={useFileSystem}
+//         />
+//       </SafeAreaView>
+
+//     </ParallaxScrollView>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   titleContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     gap: 8,
+//   },
+//   stepContainer: {
+//     gap: 8,
+//     marginBottom: 8,
+//   },
+//   reactLogo: {
+//     height: 800,
+//     width: 290,
+//     bottom: 0,
+//     left: 0,
+//     position: 'relative',
+//   },
+// });
+import * as React from 'react';
+import { useWindowDimensions } from 'react-native';
+import { Reader, ReaderProvider } from '@epubjs-react-native/core';
+import { useFileSystem } from '@epubjs-react-native/expo-file-system';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Header } from '../../components/Search/Header';
+import { SearchList } from '../../components/Search/SearchList';
+
+import alice from '../../alice'
+
+function Inner() {
+  const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  const searchListRef = React.useRef<BottomSheetModal>(null);
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <GestureHandlerRootView
+      style={{
+        flex: 1,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
+      <Header onPressSearch={() => searchListRef.current?.present()} />
+
+      <Reader
+        src={alice}
+        height={height * 0.8}
+        fileSystem={useFileSystem}
+      />
+
+      <SearchList
+        ref={searchListRef}
+        onClose={() => searchListRef.current?.dismiss()}
+      />
+    </GestureHandlerRootView>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+export default function HomeScreen() {
+  return (
+    <ReaderProvider>
+      <Inner />
+    </ReaderProvider>
+  );
+}
