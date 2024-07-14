@@ -13,12 +13,6 @@ export function Header({ onPressSearch }: Props) {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <IconButton
-        icon="arrow-left"
-        size={22}
-        onPress={() => navigation.goBack()}
-      />
-
       <View style={styles.actions}>
         <IconButton icon="magnify" size={20} onPress={onPressSearch} />
       </View>
