@@ -23,9 +23,11 @@ function Inner(props: EpubUrlProps) {
       style={{
         flex: 1,
         //paddingTop: insets.top,
-        paddingBottom: 200,
+        paddingBottom: 50,
         paddingLeft: insets.left,
         paddingRight: insets.right,
+        borderWidth: 5,
+        borderColor: "black"
       }}
     >
       <Header onPressSearch={() => searchListRef.current?.present()} />

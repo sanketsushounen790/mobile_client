@@ -1,11 +1,9 @@
-import * as React from 'react';
+import SearchCamera from "@/components/SearchCamera";
 
-import Camera from '@/components/Camera';
-
-function HomeScreen() {
+export default function HomeScreen() {
   return (
-    <Camera />
-  )
+    <SearchCamera />
+  );
 }
 
-export default HomeScreen
+

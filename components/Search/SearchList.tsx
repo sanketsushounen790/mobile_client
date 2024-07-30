@@ -1,22 +1,22 @@
 /* eslint-disable react/no-unused-prop-types */
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import React, { forwardRef, useState } from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import React, { forwardRef, useState } from "react";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
 import {
   SearchResult as SearchResultType,
   useReader,
-} from '@epubjs-react-native/core';
+} from "@epubjs-react-native/core";
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
   BottomSheetFlatList,
   BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
-import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { Text } from 'react-native-paper';
-import SearchResult from './SearchResult';
-import { contrast } from '../FullExample/utils';
+} from "@gorhom/bottom-sheet";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { Text } from "react-native-paper";
+import SearchResult from "./SearchResult";
+import { contrast } from "../FullExample/utils";
 
 interface Props {
   onClose: () => void;
@@ -35,11 +35,11 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
     theme,
   } = useReader();
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState<SearchResultType[]>(searchResults.results);
   const [page, setPage] = useState(1);
 
-  const snapPoints = React.useMemo(() => ['50%', '90%'], []);
+  const snapPoints = React.useMemo(() => ["50%", "90%"], []);
 
   const renderItem = React.useCallback(
     ({ item }: { item: SearchResultType }) => (
@@ -48,7 +48,7 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
         searchResult={item}
         onPress={(searchResult) => {
           goToLocation(searchResult.cfi);
-          addAnnotation('highlight', searchResult.cfi);
+          addAnnotation("highlight", searchResult.cfi);
           setTimeout(() => {
             removeAnnotationByCfi(searchResult.cfi);
           }, 3000);
@@ -82,7 +82,7 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
           </Text>
         </View>
 
-        <View style={{ width: '100%' }}>
+        <View style={{ width: "100%" }}>
           <BottomSheetTextInput
             inputMode="search"
             returnKeyType="search"
@@ -108,7 +108,7 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
             <Text
               variant="bodyMedium"
               style={{
-                fontStyle: 'italic',
+                fontStyle: "italic",
                 color: contrast[theme.body.background],
               }}
             >
@@ -125,13 +125,13 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
     () => (
       <View style={styles.title}>
         {isSearching && (
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
             <ActivityIndicator animating />
 
             <Text
               variant="bodyMedium"
               style={{
-                fontStyle: 'italic',
+                fontStyle: "italic",
                 marginLeft: 5,
                 color: contrast[theme.body.background],
               }}
@@ -147,7 +147,7 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
             <Text
               variant="bodyMedium"
               style={{
-                fontStyle: 'italic',
+                fontStyle: "italic",
                 color: contrast[theme.body.background],
               }}
             >
@@ -170,7 +170,7 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
         <Text
           variant="bodyMedium"
           style={{
-            fontStyle: 'italic',
+            fontStyle: "italic",
             color: contrast[theme.body.background],
           }}
         >
@@ -219,7 +219,7 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
           ListHeaderComponent={header}
           ListFooterComponent={footer}
           ListEmptyComponent={empty}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
           maxToRenderPerBatch={20}
           onEndReachedThreshold={0.2}
           onEndReached={fetchMoreData}
@@ -231,23 +231,23 @@ export const SearchList = forwardRef<Ref, Props>(({ onClose }, ref) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     flex: 1,
     paddingHorizontal: 20,
   },
   title: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginVertical: 10,
   },
   input: {
-    width: '100%',
+    width: "100%",
     borderRadius: 10,
     fontSize: 16,
     lineHeight: 20,
     padding: 8,
-    backgroundColor: 'rgba(151, 151, 151, 0.25)',
+    backgroundColor: "rgba(151, 151, 151, 0.25)",
   },
 });
