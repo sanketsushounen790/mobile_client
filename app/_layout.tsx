@@ -51,6 +51,20 @@ export default function RootLayout() {
               headerTitle: "Book Detail",
             }}
           />
+          <Stack.Screen
+            name="search/index"
+            options={{
+              headerShown: true,
+              headerTitle: "Camera Search",
+            }}
+          />
+          <Stack.Screen
+            name="explore/index"
+            options={{
+              headerShown: true,
+              headerTitle: "Explore",
+            }}
+          />
           <Stack.Screen name="+not-found" />
         </Stack>
       </ThemeProvider>

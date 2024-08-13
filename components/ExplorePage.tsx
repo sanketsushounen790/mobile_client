@@ -1,33 +1,15 @@
+import React, { useState, useEffect } from "react";
 import useLibraryStore from "@/hooks/useLibraryStore";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import {
   StyleSheet,
   Image,
-  Platform,
-  SafeAreaView,
+  View,
+  Text,
   FlatList,
   Pressable,
 } from "react-native";
-
-import { View, Text } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-
-const bookHolderImage = require("@/assets/images/book_image-removebg-preview.png");
-type ItemPropsChapter = {
-  _id: string;
-  _score: number;
-  _source: {
-    chapter_original_id: string;
-    chapter_title: string;
-    author: string;
-    book_title: string;
-    date: string;
-    aws_s3_bucket_url: string;
-    cloudinary_cover_url: string;
-    language: string;
-  };
-};
 
 type ItemPropsBook = {
   _id: string;
@@ -42,7 +24,7 @@ type ItemPropsBook = {
   };
 };
 
-const Item = (book: ItemPropsChapter | ItemPropsBook) => (
+const Item = (book: ItemPropsBook) => (
   <View style={styles.item}>
     <View style={styles.bookContainer}>
       <Pressable
@@ -73,40 +55,58 @@ const Item = (book: ItemPropsChapter | ItemPropsBook) => (
   </View>
 );
 
-export default function TabTwoScreen() {
-  const books = useLibraryStore((state) => state.books);
+const ExplorePage = () => {
+  const localMachineIPv4Address = `192.168.1.5`;
 
-  console.log("Library log:");
-  console.log(books);
+  const [bookData, setBookData] = useState<ItemPropsBook[] | []>([]);
+  const [isLoading, setLoading] = useState(false);
+
+  const getRandomPopularBooks = async () => {
+    console.log("getRandomPopularBooks function flow");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `http://${localMachineIPv4Address}:5000/popular-books`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+
+      const json = await response.json();
+
+      console.log(json);
+
+      setBookData(json.books);
+    } catch (error) {
+      if (error) {
+        console.error(error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getRandomPopularBooks();
+  }, []);
 
   return (
     <View style={styles.container}>
-      {books.length !== 0 ? (
-        books.length >= 2 ? (
-          <FlatList
-            data={books}
-            renderItem={({ item }) => <Item {...item} />}
-            keyExtractor={(item) => item._id}
-            numColumns={2}
-            key={2}
-          />
-        ) : (
-          <FlatList
-            data={books}
-            renderItem={({ item }) => <Item {...item} />}
-            keyExtractor={(item) => item._id}
-          />
-        )
-      ) : (
-        <View style={styles.container}>
-          <Text style={{ fontSize: 18, textAlign: "center" }}>
-            Bạn Chưa Thêm Hoặc Mở Cuốn Sách Nào !
-          </Text>
-        </View>
-      )}
+      <FlatList
+        data={bookData}
+        renderItem={({ item }) => <Item {...item} />}
+        keyExtractor={(item) => item._id}
+        numColumns={2}
+        key={2}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -132,3 +132,5 @@ const styles = StyleSheet.create({
     height: 200,
   },
 });
+
+export default ExplorePage;

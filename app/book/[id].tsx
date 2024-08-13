@@ -1,4 +1,3 @@
-import EpubReader from "@/components/EpubReader";
 import { FullExample } from "@/components/FullExample";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";

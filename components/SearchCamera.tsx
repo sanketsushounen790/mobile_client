@@ -1,28 +1,19 @@
 import React, { useEffect, useState } from "react";
 import {
   View,
-  ScrollView,
   Text,
   ActivityIndicator,
   Image,
-  Touchable,
   StyleSheet,
-  FlatList,
   SafeAreaView,
   Button,
-  TouchableOpacity,
-  Modal,
-  Pressable,
-  Alert,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
 
 import * as ImagePicker from "expo-image-picker";
-import EpubReader from "./EpubReader";
 import { router } from "expo-router";
 import useLibraryStore from "@/hooks/useLibraryStore";
 
-type Book = {
+type Chapter = {
   //_index: string;
   _id: string;
   _score: number;
@@ -33,34 +24,38 @@ type Book = {
     book_title: string;
     date: string;
     aws_s3_bucket_url: string;
+    cloudinary_cover_url: string;
+    language: string;
   };
 };
 
 function SearchCamera() {
-  const localMachineIPv4Address = `192.168.100.144`;
+  const localMachineIPv4Address = `192.168.1.5`;
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrlBase64, setImageUrlBase64] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [isSucess, setSucess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [data, setData] = useState<Book>({} as Book);
+  const [data, setData] = useState<Chapter>({} as Chapter);
   const [extractedText, setExtractedText] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
   const addNewBook = useLibraryStore((state) => state.addNewBook);
 
   useEffect(() => {
-    if (isSucess) {
-      addNewBook(data);
-      router.push({
-        pathname: "/book/[id]",
-        params: {
-          url: data?._source.aws_s3_bucket_url,
-        },
-      });
+    if (data !== undefined && extractedText !== "") {
+      if (isSucess) {
+        addNewBook(data);
+        router.push({
+          pathname: "/book/[id]",
+          params: {
+            url: data?._source.aws_s3_bucket_url,
+          },
+        });
+      }
     }
   }, [data, isSucess]);
 
+  // Hàm POST data là hình ảnh của 1 trang sách về endpoint của server expressjs để thu lại data của quyển sách hoàn chỉnh
   const getResult = async () => {
     console.log("getResult function flow");
     setLoading(true);
@@ -100,6 +95,7 @@ function SearchCamera() {
     }
   };
 
+  // Hàm reset lại các state
   const resetImage = () => {
     setImageUrl("");
     setLoading(false);
@@ -115,11 +111,14 @@ function SearchCamera() {
         book_title: "",
         date: "",
         aws_s3_bucket_url: "",
+        cloudinary_cover_url: "",
+        language: "",
       },
     });
     setExtractedText("");
   };
 
+  // Hàm chọn tải ảnh lên từ thư viênj điện thoại
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -139,6 +138,7 @@ function SearchCamera() {
     }
   };
 
+  // Hàm cho người dùng chụp ảnh trang sách mới
   const takingNewImage = async () => {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -150,7 +150,7 @@ function SearchCamera() {
     if (!result.canceled) {
       setImageUrl(result.assets[0].uri);
       // @ts-ignore
-      setImageUrl(result.assets[0].base64);
+      setImageUrlBase64(result.assets[0].base64);
     }
   };
 
@@ -160,6 +160,7 @@ function SearchCamera() {
         <View style={styles.buttonContainer}>
           <Button title="Chụp Mới" onPress={takingNewImage} />
           <Button title="Tải Lên" onPress={pickImage} />
+          <Button title="Reset" onPress={resetImage} />
         </View>
 
         {imageUrl === "" ? (
@@ -179,15 +180,6 @@ function SearchCamera() {
                 uri: imageUrl,
               }}
             />
-
-            <TouchableOpacity onPress={resetImage}>
-              <AntDesign
-                name="closecircle"
-                size={45}
-                color="red"
-                style={styles.clearButton}
-              />
-            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -197,7 +189,7 @@ function SearchCamera() {
           {isLoading ? (
             <View>
               <ActivityIndicator />
-              <Text>Dang Tim Kiem</Text>
+              <Text>Đang Tìm Kiếm</Text>
             </View>
           ) : imageUrl === "" ? (
             <Button title="Tìm Kiếm" disabled={true} />
@@ -208,6 +200,11 @@ function SearchCamera() {
       </View>
 
       <View style={styles.errMsgContainer}>
+        {data === undefined && extractedText === "" ? (
+          <Text style={{ textAlign: "center" }}>Không Tìm Thấy Sách</Text>
+        ) : (
+          <></>
+        )}
         <Text></Text>
       </View>
     </SafeAreaView>
@@ -230,38 +227,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "90%",
     height: 500,
-    marginTop: 50,
   },
 
   buttonContainer: {
-    flex: 0.5,
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
-    //backgroundColor: "blue",
+    //backgroundColor: "brown",
     width: "100%",
-    height: 50,
   },
   imageContainer: {
-    flex: 3,
+    //flex: 5,
     alignItems: "center",
     justifyContent: "center",
     //backgroundColor: "darkorange",
     width: "90%",
-    height: 400,
+    height: 390,
     borderWidth: 3,
     borderStyle: "dashed",
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: 310,
+    height: 380,
   },
   uploadedImage: {
-    marginTop: 20,
-    width: 330,
-    height: 400,
+    width: 310,
+    height: 390,
   },
-
+  uploadedImageContainer: {
+    //marginTop: 10,
+  },
   searchContainer: {
     alignItems: "center",
     justifyContent: "center",
@@ -276,16 +272,21 @@ const styles = StyleSheet.create({
     //backgroundColor: "green",
   },
   errMsgContainer: {
-    height: 70,
+    height: 50,
     alignItems: "center",
     justifyContent: "center",
     //backgroundColor: "yellow",
     width: "90%",
+    marginBottom: 30,
   },
   clearButton: {
     position: "absolute",
     right: -12,
     top: -415,
+
+    backgroundColor: "blue",
+    width: 100,
+    height: 100,
   },
 
   centeredView: {

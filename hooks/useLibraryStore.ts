@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type Book = {
+type Chapter = {
   //_index: string;
   _id: string;
   _score: number;
@@ -11,12 +11,28 @@ type Book = {
     book_title: string;
     date: string;
     aws_s3_bucket_url: string;
+    cloudinary_cover_url: string;
+    language: string;
+  };
+};
+
+type Book = {
+  //_index: string;
+  _id: string;
+  _score: number;
+  _source: {
+    author: string;
+    book_title: string;
+    date: string;
+    aws_s3_bucket_url: string;
+    cloudinary_cover_url: string;
+    language: string;
   };
 };
 
 interface LibraryState {
-  books: Book[];
-  addNewBook: (newBook: Book) => void;
+  books: Chapter[] | Book[];
+  addNewBook: (newBook: Chapter | Book) => void;
 }
 
 const useLibraryStore = create<LibraryState>((set) => ({
@@ -24,7 +40,8 @@ const useLibraryStore = create<LibraryState>((set) => ({
   addNewBook: (newBook) =>
     set((state) => ({
       books: state.books.some(
-        (item: Book) => item._source.book_title === newBook._source.book_title
+        (item: Chapter | Book) =>
+          item._source.book_title === newBook._source.book_title
       )
         ? state.books
         : [...state.books, newBook],

@@ -1,9 +1,5 @@
-import SearchCamera from "@/components/SearchCamera";
+import SearchPage from "@/components/SearchPage";
 
 export default function HomeScreen() {
-  return (
-    <SearchCamera />
-  );
+  return <SearchPage />;
 }
-
-
