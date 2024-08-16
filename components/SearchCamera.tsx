@@ -30,13 +30,11 @@ type Chapter = {
 };
 
 function SearchCamera() {
-  const localMachineIPv4Address = `192.168.1.5`;
+  const localMachineIPv4Address = `192.168.1.11`;
   const [imageUrl, setImageUrl] = useState("");
   const [imageUrlBase64, setImageUrlBase64] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [isSucess, setSucess] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
   const [data, setData] = useState<Chapter>({} as Chapter);
   const [extractedText, setExtractedText] = useState("");
   const addNewBook = useLibraryStore((state) => state.addNewBook);

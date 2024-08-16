@@ -1,19 +1,10 @@
 import useLibraryStore from "@/hooks/useLibraryStore";
-import Ionicons from "@expo/vector-icons/Ionicons";
+
 import { router } from "expo-router";
-import {
-  StyleSheet,
-  Image,
-  Platform,
-  SafeAreaView,
-  FlatList,
-  Pressable,
-} from "react-native";
+import { StyleSheet, Image, FlatList, Pressable } from "react-native";
 
 import { View, Text } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
-const bookHolderImage = require("@/assets/images/book_image-removebg-preview.png");
 type ItemPropsChapter = {
   _id: string;
   _score: number;

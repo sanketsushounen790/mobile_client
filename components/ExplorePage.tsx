@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import useLibraryStore from "@/hooks/useLibraryStore";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 import {
   StyleSheet,
@@ -56,7 +54,7 @@ const Item = (book: ItemPropsBook) => (
 );
 
 const ExplorePage = () => {
-  const localMachineIPv4Address = `192.168.1.5`;
+  const localMachineIPv4Address = `192.168.1.11`;
 
   const [bookData, setBookData] = useState<ItemPropsBook[] | []>([]);
   const [isLoading, setLoading] = useState(false);

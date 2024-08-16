@@ -5,27 +5,22 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  StatusBar,
   ScrollView,
-  ImageBackground,
   TextInput,
   FlatList,
-  Pressable,
   ActivityIndicator,
   Modal,
-  Alert,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
+
 // @ts-ignore
 import Carousel from "react-native-anchor-carousel";
 import { FontAwesome5, Feather, MaterialIcons } from "@expo/vector-icons";
-import { Button } from "react-native-paper";
 import useLibraryStore from "@/hooks/useLibraryStore";
 import { router } from "expo-router";
 import HighlightedText, { Highlight } from "react-native-highlighter";
 
 type Book = {
-  //_index: string;
   _id: string;
   _score: number;
   _source: {
@@ -39,7 +34,7 @@ type Book = {
 };
 
 const SearchPage = () => {
-  const localMachineIPv4Address = `192.168.1.5`;
+  const localMachineIPv4Address = `192.168.1.11`;
   const addNewBook = useLibraryStore((state) => state.addNewBook);
 
   const [bookData, setBookData] = useState<Book[] | []>([]);
@@ -48,11 +43,6 @@ const SearchPage = () => {
   const [isLoading, setLoading] = useState(false);
   const [isSearchLoading, setIsSearchLoading] = useState(false);
 
-  const pushToCameraSearch = () => {
-    router.push({
-      pathname: "/search",
-    });
-  };
   const getRandomPopularBooks = async () => {
     console.log("getRandomPopularBooks function flow");
     setLoading(true);
@@ -82,10 +72,6 @@ const SearchPage = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getRandomPopularBooks();
-  }, []);
 
   const getBookFromSearchResult = async (textSearch: string) => {
     console.log("getBookFromSearchResult function flow");
@@ -125,9 +111,13 @@ const SearchPage = () => {
     }
   };
 
+  useEffect(() => {
+    getRandomPopularBooks();
+  }, []);
+
   const carouselRef = useRef(null);
 
-  const { width, height } = Dimensions.get("window");
+  const { width } = Dimensions.get("window");
 
   const [modalVisible, setModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -144,6 +134,12 @@ const SearchPage = () => {
       language: "",
     },
   });
+
+  const pushToCameraSearch = () => {
+    router.push({
+      pathname: "/search",
+    });
+  };
 
   const handleAddNewBookToLibrary = (newBook: Book) => {
     addNewBook(newBook);
@@ -176,7 +172,8 @@ const SearchPage = () => {
       },
     });
   };
-  const onOptionPress = (book: Book) => {
+
+  const handleBookPickedFromSearchDropdownResult = (book: Book) => {
     console.log("book pressed:");
     console.log(book);
 
@@ -343,7 +340,9 @@ const SearchPage = () => {
 
                       return (
                         <TouchableOpacity
-                          onPress={() => onOptionPress(item)}
+                          onPress={() =>
+                            handleBookPickedFromSearchDropdownResult(item)
+                          }
                           style={{
                             //backgroundColor: "orange",
                             borderTopWidth: 2,
@@ -497,8 +496,6 @@ const SearchPage = () => {
 };
 
 const styles = StyleSheet.create({
-  // CAROUSEL STYLES
-
   carouselImage: {
     width: 200,
     height: 310,
